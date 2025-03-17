@@ -1,5 +1,5 @@
-import mongoose, { FilterQuery } from "mongoose";
-import Author, { IAuthor } from "../models/author";
+import mongoose, {FilterQuery} from "mongoose";
+import Author, {IAuthor} from "../models/author";
 
 describe('Verify author schema', () => {
     test('should be invalid if first name is empty', async () => {
@@ -141,10 +141,20 @@ describe('Verify author schema virtuals', () => {
 
 describe('Verify author counting', () => {
     const authors = [
-        { first_name: 'John', family_name: 'Doe', date_of_birth: new Date('1958-10-10'), date_of_death: new Date('2020-01-01') },
-        { first_name: 'Jane', family_name: 'Doe', date_of_birth: new Date('1964-05-21'), date_of_death: new Date('2020-01-01') },
-        { first_name: 'John', family_name: 'Smith', date_of_birth: new Date('1989-01-09') },
-        { first_name: 'Jane', family_name: 'Smith', date_of_birth: new Date('1992-12-27') }
+        {
+            first_name: 'John',
+            family_name: 'Doe',
+            date_of_birth: new Date('1958-10-10'),
+            date_of_death: new Date('2020-01-01')
+        },
+        {
+            first_name: 'Jane',
+            family_name: 'Doe',
+            date_of_birth: new Date('1964-05-21'),
+            date_of_death: new Date('2020-01-01')
+        },
+        {first_name: 'John', family_name: 'Smith', date_of_birth: new Date('1989-01-09')},
+        {first_name: 'Jane', family_name: 'Smith', date_of_birth: new Date('1992-12-27')}
     ];
 
     beforeAll(() => {
@@ -172,7 +182,7 @@ describe('Verify author counting', () => {
                 Promise.resolve(
                     filter.first_name === 'John' ? expected : 0
                 ));
-        const count = await Author.getAuthorCount({ first_name: 'John' });
+        const count = await Author.getAuthorCount({first_name: 'John'});
         expect(expected).toBe(count);
     });
 
@@ -183,7 +193,7 @@ describe('Verify author counting', () => {
                 Promise.resolve(
                     filter.family_name === 'Smith' ? expected : 0
                 ));
-        const count = await Author.getAuthorCount({ family_name: 'Smith' });
+        const count = await Author.getAuthorCount({family_name: 'Smith'});
         expect(expected).toBe(count);
     });
 
@@ -193,10 +203,10 @@ describe('Verify author counting', () => {
             .mockImplementationOnce((filter: FilterQuery<IAuthor>) =>
                 Promise.resolve(
                     filter.first_name === 'Jane' &&
-                        filter.date_of_birth === authors[1].date_of_birth
+                    filter.date_of_birth === authors[1].date_of_birth
                         ? expected : 0
                 ));
-        const count = await Author.getAuthorCount({ first_name: 'Jane', date_of_birth: authors[1].date_of_birth });
+        const count = await Author.getAuthorCount({first_name: 'Jane', date_of_birth: authors[1].date_of_birth});
         expect(expected).toBe(count);
     });
 
@@ -206,10 +216,10 @@ describe('Verify author counting', () => {
             .mockImplementationOnce((filter: FilterQuery<IAuthor>) =>
                 Promise.resolve(
                     filter.family_name === 'Smith' &&
-                        filter.date_of_birth === authors[2].date_of_birth
+                    filter.date_of_birth === authors[2].date_of_birth
                         ? expected : 0
                 ));
-        const count = await Author.getAuthorCount({ family_name: 'Smith', date_of_birth: authors[2].date_of_birth });
+        const count = await Author.getAuthorCount({family_name: 'Smith', date_of_birth: authors[2].date_of_birth});
         expect(expected).toBe(count);
     });
 
@@ -220,17 +230,27 @@ describe('Verify author counting', () => {
                 Promise.resolve(
                     filter.date_of_death ? expected : 0
                 ));
-        const count = await Author.getAuthorCount({ date_of_death: { $exists: true } });
+        const count = await Author.getAuthorCount({date_of_death: {$exists: true}});
         expect(expected).toBe(count);
     });
 });
 
 describe('Verify author listing', () => {
     const authors = [
-        { first_name: 'Kim', family_name: 'Woon', date_of_birth: new Date('1958-10-10'), date_of_death: new Date('2020-01-01') },
-        { first_name: 'Moon', family_name: 'Sen', date_of_birth: new Date('1964-05-21') },
-        { first_name: 'John', family_name: 'Woon', date_of_birth: new Date('1989-01-09'), date_of_death: new Date('2020-01-01') },
-        { first_name: 'Moon', family_name: 'Sen', date_of_birth: new Date('1992-12-27') }
+        {
+            first_name: 'Kim',
+            family_name: 'Woon',
+            date_of_birth: new Date('1958-10-10'),
+            date_of_death: new Date('2020-01-01')
+        },
+        {first_name: 'Moon', family_name: 'Sen', date_of_birth: new Date('1964-05-21')},
+        {
+            first_name: 'John',
+            family_name: 'Woon',
+            date_of_birth: new Date('1989-01-09'),
+            date_of_death: new Date('2020-01-01')
+        },
+        {first_name: 'Moon', family_name: 'Sen', date_of_birth: new Date('1992-12-27')}
     ];
 
     beforeAll(() => {
@@ -264,14 +284,13 @@ describe('Verify author listing', () => {
                         if (sortOpts.first_name === 1) {
                             return Promise.resolve(authors.map(author => new Author(author))
                                 .sort((a, b) => a.first_name.localeCompare(b.first_name)));
-                        }
-                        else {
+                        } else {
                             return Promise.resolve(authors.map(author => new Author(author)));
                         }
                     })
                 }
             })
-        const result = await Author.getAllAuthors({ first_name: 1 });
+        const result = await Author.getAllAuthors({first_name: 1});
         expect(expected).toStrictEqual(result);
     });
 
@@ -288,14 +307,13 @@ describe('Verify author listing', () => {
                         if (sortOpts.family_name === -1) {
                             return Promise.resolve(authors.map(author => new Author(author))
                                 .sort((a, b) => b.family_name.localeCompare(a.family_name)));
-                        }
-                        else {
+                        } else {
                             return Promise.resolve(authors.map(author => new Author(author)));
                         }
                     })
                 }
             })
-        const result = await Author.getAllAuthors({ family_name: -1 });
+        const result = await Author.getAllAuthors({family_name: -1});
         expect(expected).toStrictEqual(result);
     });
 });
